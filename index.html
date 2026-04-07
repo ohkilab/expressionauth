@@ -17,7 +17,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-  <title>LabellessFace</title>
+  <title>ExpressionAuth</title>
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
 
@@ -132,18 +132,17 @@
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-              Demographic bias is one of the major challenges for face recognition systems. The majority of existing
-              studies on demographic biases are heavily dependent on specific demographic groups or demographic
-              classifier, making it difficult to address performance for unrecognised groups. This paper introduces
-              “LabellessFace," a novel framework that improves demographic bias in face recognition without requiring
-              demographic group labeling typically required for fairness considerations. We propose a novel fairness
-              enhancement metric called the class favoritism level, which assesses the extent of favoritism towards
-              specific classes across the dataset. Leveraging this metric, we introduce the fair class margin penalty,
-              an extension of existing marginbased metric learning. This method dynamically adjusts learning parameters
-              based on class favoritism levels, promoting fairness across all attributes. By treating each class as an
-              individual in facial recognition systems, we facilitate learning that minimizes biases in authentication
-              accuracy among individuals. Comprehensive experiments have demonstrated that our proposed method is
-              effective for enhancing fairness while maintaining authentication accuracy.
+              As interests in Virtual Reality (VR) continue to rise, head-mounted displays (HMDs) are actively 
+		      being developed. Current user authentication methods in HMDs requires the use of a virtual keyboard, 
+			  which has low usability and is prone to shoulder surfing attacks. To address this challenge, 
+			  a facial expression based authentication that tracks users’ smile using face tracking capabilities 
+			  integrated into certain HMDs has been proposed. In this paper, we extend this approach to 
+			  a wider range of facial expressions and evaluate both its effectiveness and usability. 
+              A facial expression based authentication has the potential to be a secure and usable biometric system, 
+              achieving EER as low as 0.00167 and AUC of up to 0.999 in our experiments.
+              Furthermore, a user study was conducted, demonstrating that a facial expression based 
+			  authentication offers high usability, with a System Usability Scale (SUS) score of 71.75 
+			  and an average NASA-TLX subscale score of 39.6.
             </p>
           </div>
         </div>
@@ -158,23 +157,27 @@
         <div class="columns is-centered">
           <div class="column is-full">
             <div class="content">
-              <h2 class="title is-3">LabellessFace Framework</h2>
+              <h2 class="title is-3">Authentication Framework</h2>
               <div class="level-set has-text-justified">
                 <p>
-                  <b>LabellessFace</b> framework is based on existing softmax-based metric learning. In addition to
-                  softmax-based metric learning, it dynamically sets different
-                  margins for each class based on <b>class favoritism level</b> while progressing the training through
-                  the
-                  fair class margin penalty process, and updates the class favoritism level at the end of each epoch.
-                  Here,
-                  the class favoritism level is determined based on how much the recognition accuracy for each
-                  individual
-                  deviates from the overall average using the training samples.
+				  Authentication framework consists of enrollment and verification. 
+				  In the enrollment, a user is required to take facial expression data. 
+				  The taken data are fed into a feature extraction network to extract their features.
+				  Then the extracted features are stored in a storage as template features.
+                  Note that the storage is typically prepared securely in a VR device.
+				  In the verification, facial expression data are taken from a probe user, 
+				  then are fed into the feature extraction network. 
+				  The extracted probe features are then compared with template features enrolled by similarity scores calculation.
+				  If the similarity score exceeds the threshold, the user will be recognized as a genuine user.
+				  The model combines the distance learning metric ArcFace with a 1D-CNN for authentication.
                 </p>
               </div>
               <center>
-                <img src="static/images/overview_proposed.svg" alt="Overview of LabellessFace" class="center-image">
+                <img src="static/images/auth_flow.png" alt="Authentication Flow" class="center-image">
               </center>
+			  <center>
+			    <img src="static/images/1dcnn.png" alt ="Feature Extraction Network Architecture" class= "center-image">
+		      </center>
             </div>
           </div>
         </div>
@@ -187,21 +190,22 @@
         <div class="columns is-centered">
           <div class="column is-full">
             <div class="content">
-              <h2 class="title is-3">Fair Class Margin Penalty</h2>
+              <h2 class="title is-3">Facial Expression Used for Authentication</h2>
               <div class="level-set has-text-justified">
                 <p>
-                  In this proposal, to minimize the bias in individual authentication accuracy, a margin coefficient
-                  $d_c$
-                  is added to the basic ArcFace loss function to minimize the bias in individual authentication
-                  accuracy.
-                  In this case, $d_c$ takes different values for each class and is determined at the end of each epoch
-                  based on the class favoritism level $f_c$, which indicates the extent to which each class $c \in
-                  \mathcal{C}$ is favored among all classes.
+                  Authentication models is trained separately for each of the six facial expressions corresponding to 
+				  six basic emotions defined by Ekman: happiness, sadness, surprise, anger, fear, and disgust.
+                  Ekman’s basic emotions represent six universally recognized emotional states, each accompanied by characteristic facial movements. 
+                  These emotions are well suited for the authentication method, which relies on facial expression movements.
+				  In this study, BlendShapes captured during facial expression motions, 
+				  as datasets contain face-tracking information obtained from HMDs.
+				  ''Blendshape'' is a simple linear model of facial expressions and is the prevalent approach to realistic facial animation.
                 </p>
+                <center>
+                  <img src="static/images/blendshape_timeseries_happiness.png" alt="Example of Obtained BlendShapes"
+                    class="center-image">
+                </center>
               </div>
-              <center>
-                <img src="static/images/equations.svg" width="480" alt="Fair Class Margin Penalty" class="center-image">
-              </center>
             </div>
           </div>
         </div>
@@ -214,20 +218,22 @@
         <div class="columns is-centered">
           <div class="column is-full">
             <div class="content">
-              <h2 class="title is-3">Class Favoritism Level Calculation</h2>
+              <h2 class="title is-3">Evaluation Purpose</h2>
               <div class="level-set has-text-justified">
                 <p>
-                  The class favoritism level $f_c$ for class $c$ is calculated at the end of each epoch using the
-                  training
-                  data. Classes identified with relatively high confidence are calculated with a higher favoritism
-                  level,
-                  while those with lower confidence receive a lower level, which is then reflected in the calculation of
-                  the coefficient $d_c$ of fair class margin penalty for the next epoch.
+				  The authentication method was implemented as a system running on the Meta Quest Pro and evaluated 
+				  using a custom-built dataset.We evaluated the authentication method from the following two perspectives.
                 </p>
-                <center>
-                  <img src="static/images/overview_cfl.svg" alt="Class Favoritism Level Calculation"
-                    class="center-image">
-                </center>
+				<ul>
+				  <li><b>RQ1</b> (Performance): To what extent does the authentication method achieve satisfactory performance?</li>
+				  <li><b>RQ2</b> (Usability): Is the authentication method perceived as user-friendly from the user's perspective?</li>
+				</ul>
+				<p>
+				  Our dataset was constructed by collecting data from 20 participants in their twenties.
+				  The dataset comprises 6 facial expressions per person, with 20 instances for each facial expression.
+				  Each instance contains 63 types of blendshape information recorded over a 5-seconds interval 
+				  at 30 frames per second, obtained using the Meta Quest Pro.
+				</p>
               </div>
             </div>
           </div>
@@ -241,22 +247,78 @@
         <div class="columns is-centered">
           <div class="column is-full">
             <div class="content">
-              <h2 class="title is-3">Evaluation</h2>
+              <h2 class="title is-3">Performance Evaluation</h2>
               <div class="level-set has-text-justified">
-                <p>
-                  For model training, the BUPT-Balancedface dataset, which has an equal proportion of races,
-                  was used. BUPT-Balancedface contains 7,000 classes of four races: African, Asian, Caucasian, and
-                  Indian,
-                  with racial labeling provided for each data point. In the evaluation, the Labeled Faces in the Wild
-                  (LFW) and Racial Faces in the Wild (RFW) datasets were used. We utilized ResNet34 as a face
-                  recognition
-                  model architecture.
+                <p> 
+                  We evaluated recognition performance under two use cases: 
+				  a home scenario, in which the system is used by a small, closed group, and a public scenario, in which it is used by a larger and potentially unknown user population. 
+In the home scenario, all samples were treated as known users. 20 samples were divided into 5-fold for each user, with 16 samples used for training and 4 samples used for testing.
                 </p>
+                <ul>
+                  <li><b>Home scenario</b>: all samples were treated as known users. 20 samples were divided into 5-fold for each user, with 16 samples used for training and 4 samples used for testing.</li>
+                  <li><b>Public Scenario</b>: In the public scenario, samples from 20 participants were divided into 5-fold, with samples from 16 participants treated as known users and used for training and samples from 4 participants used for testing as unknown users.</li>
+                </ul>
+                <p> 
+                  In both scenarios, 5-fold cross-validation was applied. System performance was assessed using Equal Error Rate (EER) and Area Under the Curve (AUC).
+                </p>
+				<p>
+				  The model achieved an EER of 0.00167 and an AUC of 0.999 when using the happiness in the home scenario, 
+				  demonstrating the highest performance among all facial expressions. In the public scenario, 
+				  the EER and AUC were 0.0167 and 0.999, respectively, also indicating strong performance.
+                  Recognition performance when using sadness in the home scenario was an EER of 0.117 and an AUC of 0.954, 
+                  which was lower than that of the other expressions. However, in the public scenario, 
+				  it maintained performance comparable to that in the home scenario, achieving an EER of 0.105 and an AUC of 0.952.
+                  For the other facial expressions, the AUC in the home scenario was almost 0.990, which was comparable 
+				  to the performance of the happiness. However, the AUC in the public scenario decreased to around 0.960, 
+				  recognition performance decreased to below that of the sadness expression.
+				</p>
                 <center>
                   <p style="width:480px; min-width:75%; text-align:left; margin-bottom:0; font-size:0.8em">
-                    Table: The performance and fairness evaluation results evaluated on LFW dataset. STD, Gini, SER were
-                    assessed when users were divided according to LFW 26 attributes.</p>
-                  <img src="static/images/result.svg" style="width:480px; min-width:75%" alt="result"
+                    Table: The performance evaluation and system usability scale (SUS) scores of the facial-expression-based authentication model for each expression</p>
+                  <img src="static/images/result_auc.png" style="width:480px; min-width:75%" alt="result-performance-sus"
+                    class="center-image">
+                </center>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+
+  <section class="section hero is-small" id="Content5">
+    <div class="hero-body">
+      <div class="container is-max-desktop content">
+        <div class="columns is-centered">
+          <div class="column is-full">
+            <div class="content">
+              <h2 class="title is-3">Usability Evaluation</h2>
+              <div class="level-set has-text-justified">
+                <p>
+                  For usability evaluation, 20 participants in their 20s performed an verification task 
+				  using 6 facial expressions in a randomized order, followed by a questionnaire-based survey.
+                  Usability was assessed using the System Usability Scale (SUS) and NASA Task Load Index (NASA-TLX). 
+				  Participants were also able to provide free-text comments at the end of the questionnaire.
+				  As the usability evaluation procedure, participants enrolled a facial expression as a template 
+				  and performed a single verification attempt as a probe. Verification success was determined 
+				  by thresholding the cosine similarity between the template and probe features. 
+				  After completing the verification task, participants answered a questionnaire consisting of SUS and NASA-TLX items.
+                </p>
+				<p>
+				The highest SUS score was 71.75 when using happiness. 
+				This score exceeds the average SUS score of 68 and corresponds to an adjectival rating of ''Good''.
+                In contrast, the disgust score was 61.62, the anger score was 64.38, 
+				and the fear score was 66.50, which were lower than the average SUS score.
+                In terms of the average NASA-TLX workload score, the happiness expression at 39.60 and
+				the sadness expression at 39.37 achieved the lowest values, followed by the surprise expression at 42.94.
+                Focusing on the subscales, the happiness expression showed the lowest mental demand (MD) at 33.20 
+				and physical demand (PD) at 26.40. In contrast, the disgust and anger expressions showed 
+				relatively high scores in effort(Eff.) and frustration(Frust.), while fear showed the highest effort score of 47.95.
+				</p>
+                <center>
+                  <p style="width:480px; min-width:75%; text-align:left; margin-bottom:0; font-size:0.8em">
+                    Figure: Comparison of NASA-TLX subscale scores under each facial expression</p>
+                  <img src="static/images/nasa_tlx_result.png" style="width:480px; min-width:75%" alt="result"
                     class="center-image">
                 </center>
                 </p>
@@ -268,7 +330,7 @@
   </section>
 
   <!-- Slide -->
-  <section class="section hero is-small" id="slide">
+  <section class="section hero is-small is-light" id="slide">
     <div class="hero-body">
       <div class="container is-max-desktop content">
         <div class="columns is-centered">
@@ -292,7 +354,7 @@
   <!--End Slide -->
 
   <!-- Paper poster -->
-  <section class="section hero is-small is-light" id="Content5">
+  <section class="section hero is-small" id="Conten6">
     <div class="hero-body">
       <div class="container is-max-desktop content">
         <div class="columns is-centered">
@@ -312,16 +374,16 @@
   <!--End paper poster -->
 
   <!--BibTex citation -->
-  <section class="section hero is-small" id="Citation">
+  <section class="section hero is-small is-light" id="Citation">
     <div class="hero-body">
       <div class="container is-max-desktop content">
         <h2 class="title">Citation</h2>
         <pre><code>
-        @inproceedings{ohki2024labellessface,
-          title={LabellessFace: Fair Metric Learning for Face Recognition without Attribute Labels},
-          author={Ohki, Tetsushi and Sato, Yuya and Nishigaki, Masakatsu and Ito, Koichi},
-          booktitle={IEEE International Joint Conference on Biometrics (IJCB 2024)},
-          year={2024}
+        @inproceedings{nagai2026expressionauth,
+          title={Secure and Usable Authentication Using Avatar Expression Blendshapes in Virtual Reality},
+          author={ Natsuki Nagai and Tetsuro Takahashi and Takuya Kataiwa and Masakatsu Nishigaki and Tetsushi Ohki},
+          booktitle={Extended Abstracts of the 2026 CHI Conference on Human Factors in Computing Systems (CHI EA '26)},
+          year={2026}
         }
       </code></pre>
       </div>
@@ -330,7 +392,7 @@
   <!--End BibTex citation -->
 
   <!--Acknowledgement -->
-  <section class="section hero is-small is-light" id="Acknowledgement">
+  <section class="section hero is-small" id="Acknowledgement">
     <div class="hero-body">
       <div class="container is-max-desktop content">
         <h2 class="title">Acknowledgement</h2>
